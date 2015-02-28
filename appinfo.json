@@ -1,0 +1,25 @@
+{
+    "appKeys": {
+        "KEY_ARRIVAL": 2,
+        "KEY_SIGN": 3,
+        "KEY_STOPID": 0,
+        "KEY_STOPNAME": 1
+    },
+    "capabilities": [
+        "location"
+    ],
+    "companyName": "mzwee95@gmail.com",
+    "longName": "BUS_SCHEDULE3",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "2",
+    "shortName": "BUS_SCHEDULE3",
+    "uuid": "78a285d7-9dd1-44fd-aba7-e36abb10a96e",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
