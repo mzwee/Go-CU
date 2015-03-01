@@ -72,7 +72,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         snprintf(stop_name_buffer, sizeof(stop_name_buffer), "%s", t->value->cstring);
         break;
       case KEY_ARRIVAL:
-        snprintf(stop_arrival_time, sizeof(stop_arrival_time), "%s", strtok((t->value->cstring), 'T'));
+        snprintf(stop_arrival_time, sizeof(stop_arrival_time), "%s", t->value->cstring);
         break;
       case KEY_SIGN:
         snprintf(sign_buffer, sizeof(sign_buffer), "%s", t->value->cstring);
