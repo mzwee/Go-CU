@@ -11,6 +11,24 @@ static TextLayer *s_stop_layer;
 static TextLayer *s_arrival;
 static TextLayer *s_sign;
 
+static void update_time() {
+  time_t temp = time(NULL);
+  struct tm *tick_time = localtime(&temp);
+}
+
+static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+  update_time();
+  
+  if(tick_time->tm_min % 1 == 0) {
+    DictionaryIterator *iter;
+    app_message_outbox_begin(&iter);
+    
+    dict_write_uint8(iter, 0, 0);
+    
+    app_message_outbox_send();
+  }
+}
+
 static void main_window_load(Window *window) {
   s_stop_label = text_layer_create(GRect(5, 25, 139, 25));
   text_layer_set_text_alignment(s_stop_label, GTextAlignmentCenter);
@@ -40,7 +58,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   // Store incoming information
   static char stop_id_buffer[10];
   static char stop_name_buffer[50];
-  static char stop_arrival_time[10];
+  static char stop_arrival_time[20];
   static char sign_buffer[50];
   
   Tuple *t = dict_read_first(iterator);
@@ -54,7 +72,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         snprintf(stop_name_buffer, sizeof(stop_name_buffer), "%s", t->value->cstring);
         break;
       case KEY_ARRIVAL:
-        snprintf(stop_arrival_time, sizeof(stop_arrival_time), "%s", t->value->cstring);
+        snprintf(stop_arrival_time, sizeof(stop_arrival_time), "%s", strtok((t->value->cstring), 'T'));
         break;
       case KEY_SIGN:
         snprintf(sign_buffer, sizeof(sign_buffer), "%s", t->value->cstring);
@@ -92,6 +110,10 @@ static void init() {
   });
   
   window_stack_push(s_main_window, true);
+  
+  update_time();
+  
+  tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
   
   app_message_register_inbox_received(inbox_received_callback);
   app_message_register_inbox_dropped(inbox_dropped_callback);
