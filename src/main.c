@@ -12,6 +12,7 @@ static TextLayer *s_stop_layer;
 static TextLayer *s_departs_label;
 static TextLayer *s_arrival;
 static TextLayer *s_sign;
+static GFont s_temp_font;
 
 static void update_time() {
   time_t temp = time(NULL);
@@ -32,27 +33,34 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 static void main_window_load(Window *window) {
+  s_temp_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOS_VGA_15));
+  
   s_stop_label = text_layer_create(GRect(5, 25, 139, 20));
   text_layer_set_text_alignment(s_stop_label, GTextAlignmentCenter);
-  text_layer_set_text(s_stop_label, "The nearest stop:");
+  text_layer_set_text(s_stop_label, "Nearest Stop:");
+  text_layer_set_font(s_stop_label, s_temp_font);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_stop_label));
   
   s_stop_layer = text_layer_create(GRect(5, 45, 139, 20));
   text_layer_set_text_alignment(s_stop_layer, GTextAlignmentCenter);
   text_layer_set_text(s_stop_layer, "Loading...");
+  text_layer_set_font(s_stop_layer, s_temp_font);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_stop_layer));
   
   s_departs_label = text_layer_create(GRect(5, 90, 139, 20));
   text_layer_set_text_alignment(s_departs_label, GTextAlignmentCenter);
   text_layer_set_text(s_departs_label, "Departs at:");
+  text_layer_set_font(s_departs_label, s_temp_font);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_departs_label));
   
-  s_arrival = text_layer_create(GRect(5, 110, 139, 20));
+  s_arrival = text_layer_create(GRect(5, 150, 139, 20));
   text_layer_set_text_alignment(s_arrival, GTextAlignmentCenter);
+  text_layer_set_font(s_arrival, s_temp_font);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_arrival));
   
   s_sign = text_layer_create(GRect(5, 70, 139, 25));
   text_layer_set_text_alignment(s_sign, GTextAlignmentCenter);
+  text_layer_set_font(s_sign, s_temp_font);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_sign));
 }
 
