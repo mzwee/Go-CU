@@ -24,24 +24,17 @@ function locationSuccess(pos) {
       var stop_name = json.stops[0].stop_name;
       console.log("Stop name is " + stop_name);
       
-      //var url2 = "https://developer.cumtd.com/api/v2.2/json/GetStopTimesByStop?key=9a1fc4aa940a4e5384a8950cc476b5e0&stop_id=" + stop_id;
       var url2 = "https://developer.cumtd.com/api/v2.2/json/GetDeparturesByStop?key=9a1fc4aa940a4e5384a8950cc476b5e0&stop_id=" + stop_id;
-
   
       // Send request to the CUMTD
       xhrRequest(url2, 'GET',
         function(responseText) {
           // responseText contains a JSON object with weather info
           var json2 = JSON.parse(responseText);
-          /*
-          var arrival_times = json2.stop_times[500].arrival_time;
-          console.log("Arrival Time is " + arrival_times);
-          */
-          var expected = json2.departures[0].expected;
-          console.log("Expected mins to arrive: " + expected);
 
-          // Conditions
-          //var trip_headsign = json2.stop_times[500].trip.trip_headsign;
+          var expected = json2.departures[0].expected;
+          console.log("Expected time to arrive: " + expected);
+
           var headsign = json2.departures[0].headsign;
           console.log("Trip Headsign is " + headsign);
           
@@ -50,7 +43,7 @@ function locationSuccess(pos) {
             "KEY_STOPID": stop_id,
             "KEY_STOPNAME": stop_name,
             "KEY_ARRIVAL": expected,
-            "KEY_SIGN": headsign
+            "KEY_SIGN": headsign,
           };
           
           // Send to Pebble
@@ -86,7 +79,6 @@ Pebble.addEventListener('ready',
     
     // Get initial weather
     getStop();
-    //stopSuccess("UNIPRRE");
   }
 );
 
@@ -95,6 +87,5 @@ Pebble.addEventListener('appmessage',
   function(e) {
     console.log("AppMessage received!");
     getStop();
-    //stopSuccess("UNIPRRE");
   }
 );

@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include <pebble_fonts.h>
 
 #define KEY_STOPID 0
 #define KEY_STOPNAME 1
@@ -8,6 +9,7 @@
 static Window *s_main_window;
 static TextLayer *s_stop_label;
 static TextLayer *s_stop_layer;
+static TextLayer *s_departs_label;
 static TextLayer *s_arrival;
 static TextLayer *s_sign;
 
@@ -30,21 +32,26 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 static void main_window_load(Window *window) {
-  s_stop_label = text_layer_create(GRect(5, 25, 139, 25));
+  s_stop_label = text_layer_create(GRect(5, 25, 139, 20));
   text_layer_set_text_alignment(s_stop_label, GTextAlignmentCenter);
   text_layer_set_text(s_stop_label, "The nearest stop:");
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_stop_label));
   
-  s_stop_layer = text_layer_create(GRect(5, 40, 139, 25));
+  s_stop_layer = text_layer_create(GRect(5, 45, 139, 20));
   text_layer_set_text_alignment(s_stop_layer, GTextAlignmentCenter);
   text_layer_set_text(s_stop_layer, "Loading...");
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_stop_layer));
   
-  s_arrival = text_layer_create(GRect(5, 65, 139, 25));
+  s_departs_label = text_layer_create(GRect(5, 90, 139, 20));
+  text_layer_set_text_alignment(s_departs_label, GTextAlignmentCenter);
+  text_layer_set_text(s_departs_label, "Departs at:");
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_departs_label));
+  
+  s_arrival = text_layer_create(GRect(5, 110, 139, 20));
   text_layer_set_text_alignment(s_arrival, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_arrival));
   
-  s_sign = text_layer_create(GRect(5, 90, 139, 25));
+  s_sign = text_layer_create(GRect(5, 70, 139, 25));
   text_layer_set_text_alignment(s_sign, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_sign));
 }
@@ -52,6 +59,8 @@ static void main_window_load(Window *window) {
 static void main_window_unload(Window *window) {
   text_layer_destroy(s_stop_label);
   text_layer_destroy(s_stop_layer);
+  text_layer_destroy(s_arrival);
+  text_layer_destroy(s_sign);
 }
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
@@ -59,6 +68,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   static char stop_id_buffer[10];
   static char stop_name_buffer[50];
   static char stop_arrival_time[20];
+  static char final_arrival[9];
   static char sign_buffer[50];
   
   Tuple *t = dict_read_first(iterator);
@@ -73,6 +83,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         break;
       case KEY_ARRIVAL:
         snprintf(stop_arrival_time, sizeof(stop_arrival_time), "%s", t->value->cstring);
+        memcpy(final_arrival, &stop_arrival_time[11], 8);
+        final_arrival[8] = '\0';
         break;
       case KEY_SIGN:
         snprintf(sign_buffer, sizeof(sign_buffer), "%s", t->value->cstring);
@@ -85,8 +97,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     t = dict_read_next(iterator); 
   }
   
+  vibes_double_pulse();
   text_layer_set_text(s_stop_layer, stop_name_buffer);
-  text_layer_set_text(s_arrival, stop_arrival_time);
+  text_layer_set_text(s_arrival, final_arrival);
   text_layer_set_text(s_sign, sign_buffer);
 }
 

@@ -12,7 +12,13 @@
     "longName": "BUS_SCHEDULE3",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "fonts/perfect-dos-vga.ttf",
+                "name": "FONT_DOS_VGA_15",
+                "type": "font"
+            }
+        ]
     },
     "sdkVersion": "2",
     "shortName": "BUS_SCHEDULE3",
